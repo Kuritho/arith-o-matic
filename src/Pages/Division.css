@@ -1,0 +1,129 @@
+/* General Page Styling */
+.containerz {
+  text-align: center;
+  font-family: "Arial", sans-serif;
+  padding: 20px;
+  background-color: #ebdd9f;
+  min-height: 100vh;
+  animation: backgroundMove 6s infinite alternate ease-in-out;
+  background: url('https://www.transparenttextures.com/patterns/cartographer.png'), linear-gradient(to right, #ff6a88, #ffcc00);
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* Problem Box */
+.problem-box {
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.problem {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.correct-answer {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Home Button */
+.home-button {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #0056b3;
+}
+
+/* Star Drag and Drop Elements */
+.stars-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.star {
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.star:hover {
+  transform: scale(1.2);
+}
+
+/* Drop Boxes */
+.bottom-box-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.drop-box {
+  width: 150px;
+  height: 150px;
+  background-color: #eee;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #000;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.drop-box:hover {
+  background-color: #d0e8ff;
+}
+
+/* Check Answer Button */
+.check-answer-button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  background-color: #28a745;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.check-answer-button:hover {
+  background-color: #218838;
+}
+
+/* Congrats Message */
+.congrats-message {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ff9800;
+  margin-top: 15px;
+}

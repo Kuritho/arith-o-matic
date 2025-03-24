@@ -1,0 +1,173 @@
+/* General Page Styling */
+body {
+    background: linear-gradient(to right, #ff758c, #ff7eb3);
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-align: center;
+    margin: 0;
+  }
+  
+  .addition-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+  }
+  
+  /* Top Buttons and Titles */
+  .top-left {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+  
+  .btn-home, .restart-button {
+    padding: 12px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .btn-home {
+    background-color: #ff4081;
+    color: white;
+  }
+  
+  .btn-home:hover {
+    background-color: #e84118;
+  }
+  
+  .restart-button {
+    background-color: #00ad56;
+    color: white;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+  }
+  
+  .restart-button:hover {
+    background-color: #ff4757;
+  }
+  
+  /* Problem Section */
+  .problem-text {
+    font-size: 80px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .problem {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Number Input Section */
+  .answer {
+    font-size: 4.2rem;
+    color: #000;
+  }
+  
+  /* Droppable & Draggable Boxes */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .grid-box {
+    width: 190px;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffeb3b;
+    border: 3px dashed #333;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    transition: transform 0.2s;
+  }
+  
+  .grid-box:hover {
+    transform: scale(1.1);
+  }
+  
+  .ten-by-ten-grid, .one-by-ten-grid, .one-by-one-grid {
+    border: 2px solid #031c74;
+    background-color: rgb(226, 21, 110);
+    padding: 3px;
+    box-sizing: border-box;
+  }
+  
+  .ten-by-ten-grid {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .one-by-ten-grid {
+    width: 25px;
+    height: 100px;
+  }
+  
+  .one-by-one-grid {
+    width: 25px;
+    height: 25px;
+  }
+  
+  /* Button Styling */
+  .btn-btn-check {
+    background-color: #ff4757;
+    color: white;
+    padding: 16px 26px;
+    font-size: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .btn-btn-check:hover {
+    background-color: #e84118;
+  }
+  
+  /* Responsive Styling */
+  @media (max-width: 768px) {
+    .problem-text {
+      font-size: 60px;
+    }
+    .grid-box {
+      width: 150px;
+      height: 150px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .problem-text {
+      font-size: 50px;
+    }
+    .grid-box {
+      width: 120px;
+      height: 120px;
+    }
+    .btn-home, .restart-button {
+      font-size: 16px;
+    }
+  }
+
+  .congratulations-message-sub {
+    font-size: 24px;
+    color: #215a07;
+    font-weight: bold;
+    margin-top: 15px;
+  }
+  

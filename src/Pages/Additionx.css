@@ -1,0 +1,354 @@
+body {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  background: linear-gradient(to right, #ff9a9e, #fad0c4);
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #877ac4;
+    animation: backgroundMove 6s infinite alternate ease-in-out;
+    background: url('https://www.transparenttextures.com/patterns/cartographer.png'), linear-gradient(to right, #ff6a88, #ffcc00);
+  }
+
+.containerp {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #2e8439, #5ec26b);
+    overflow: hidden;
+    animation: backgroundMove 6s infinite alternate ease-in-out;
+    background: url('https://www.transparenttextures.com/patterns/cartographer.png'), linear-gradient(to right, #ff6a88, #ffcc00);
+}
+
+/* Fun animation for a wavy background effect */
+@keyframes backgroundMove {
+    0% { background-position: left; }
+    100% { background-position: right; }
+}
+
+/* Bouncing effect for elements inside */
+.bouncy {
+    animation: bounce 2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+  .home-text {
+    position: absolute;
+    top: -50px;
+    left: 14px;
+    font-size: 54px;
+    font-weight: bold;
+    color: #e9dbdb;
+  }
+
+  .home-text-problem {
+    position: absolute;
+    top: 140px;
+    left: 270px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #010000;
+  }
+
+  .home-button {
+    position: absolute;
+    top: 80px;
+    left: 10px;
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .home-button:hover {
+    background-color: #0056b3;
+  }
+
+  .plus {
+    position: absolute;
+    top: 120px;
+    left: 1px;
+    font-size: 80px;
+  }
+
+  .minus {
+    position: absolute;
+    top: 120px;
+    left: 1px;
+    font-size: 80px;
+  }
+
+  .addition-box {
+    position: absolute;
+    top: 145px;
+    left: 200px;
+    font-size: 80px;
+    font-weight: bold;
+    background-color: #f8f9fa;
+    padding: 80px;
+    border-radius: 10px;
+    border: 2px solid #000;
+    width: 200px;
+    height: 260px;
+}
+  
+  .big-box {
+    position: relative;
+    width: 48rem;
+    height: 25rem;
+    background-color: #c8d8f1;
+    color: rgb(0, 0, 0);
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    overflow: hidden;
+  }
+
+  .right-align {
+    justify-content: flex-end;
+    padding-right: 7rem;
+  }
+
+  .bordered {
+    border: 3px solid #000000; 
+  }
+
+.small-box-container {
+  position: absolute;
+  top: 2%;
+  right: 32%;
+  display: flex;
+  flex-direction: row; 
+  align-items: flex-end;
+}
+/* a. Add animations when dragging/dropping for smoother UI.
+b. Allow users to remove boxes after dropping. */
+
+.small-box-hundreds {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px;
+}
+
+.small-box-tens { 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px;
+
+  }
+
+  .small-box-ones {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px;
+
+
+  }
+
+  .hammer-icon {
+    position: fixed;
+    top: 140px;
+    right: 150px;
+    font-size: 40px;
+  }
+
+  .animated-drop {
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  
+  .animated-drop:nth-child(n) {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .result-text {
+    position: fixed;
+    bottom: 20px;
+    left: 65%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .success-text {
+    font-size: 26px;
+    font-weight: bold;
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .check-button {
+    position: fixed;
+    bottom: 70px;
+    left: 300px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #e06507;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .check-button:hover {
+    background-color: #0056b3;
+  }
+
+  .success-text {
+    position: fixed;
+    top: 20px;
+    left: 85%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: bold;
+    color: green;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .reward-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffcc00;
+    background-color: #333;
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: fadeInOut 10s ease-in-out;
+  }
+  
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    10%, 90% { opacity: 1; }
+  }
+
+  
+  /* import React, { useState, useEffect } from "react";
+import Confetti from "react-confetti";
+import "./Additionx.css";
+import HundredImage from "./assets/hundred_enhanced-removebg-preview.png";
+import TenImage from "./assets/ten_enhanced-removebg-preview.png";
+import OneImage from "./assets/Screenshot_2025-03-22_195903_enhanced-removebg-preview.png"; */
+
+
+@media (max-width: 767px) {
+  .home-button {
+    z-index: 100;
+    position: absolute;
+    top: 1%;
+    padding: 5px;
+    font-size: small;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+
+  .home-text {
+    left: 35%;
+    font-size: 50px;
+    top: -20px;
+  }
+
+  .home-text-problem {
+    left: 17%;
+    font-size: medium;
+    color: white;
+    top: 90px;
+  }
+
+  .small-box-container {
+    display: none;
+  }
+
+  .big-box {
+    display: none;
+  }
+
+  .addition-box {
+    width: 6%;
+    height: 6%;
+    left: 5%;
+    top: 10%;
+  }
+
+  .addition-box .top {
+    position: absolute;
+    top: -100px;
+    left: 90px;
+  }
+
+  .addition-box .bottom {
+    position: absolute;
+    top: -30px;
+    left: 90px;
+  }
+
+  .addition-box .equals {
+    position: absolute;
+    top: 20px;
+    left: 90px;
+  }
+
+  .plus {
+    font-size: 50px;
+    top: 15%;
+    left: 1%;
+  }
+
+
+  .hammer-icon {
+    display: none;
+  }
+
+  .check-button {
+    display: none;
+  }
+
+  .result-text {
+    display: none;
+  }
+}

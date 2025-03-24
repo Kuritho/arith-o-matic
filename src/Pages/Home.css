@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+.home-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(180deg, #ffccff, #99ccff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Fredoka One', cursive;
+}
+
+/* Floating operators (bigger, more playful animation) */
+.floating-operators {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.operator {
+  position: absolute;
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  animation: bounceAnimation 5s infinite ease-in-out;
+}
+
+/* Floating with bounce effect */
+@keyframes bounceAnimation {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  50% { transform: translateY(-20px) rotate(15deg); opacity: 0.9; }
+}
+
+/* Randomized placement */
+.operator:nth-child(1) { left: 5%; animation-duration: 6s; }
+.operator:nth-child(2) { left: 25%; animation-duration: 8s; }
+.operator:nth-child(3) { left: 45%; animation-duration: 5s; }
+.operator:nth-child(4) { left: 65%; animation-duration: 7s; }
+.operator:nth-child(5) { left: 85%; animation-duration: 9s; }
+.operator:nth-child(6) { left: 15%; animation-duration: 10s; }
+.operator:nth-child(7) { left: 35%; animation-duration: 7s; }
+.operator:nth-child(8) { left: 55%; animation-duration: 11s; }
+.operator:nth-child(9) { left: 75%; animation-duration: 6s; }
+.operator:nth-child(10) { left: 95%; animation-duration: 12s; }
+
+/* Header Styling */
+.header-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.main-title {
+  font-size: 3rem;
+  color: #ff6699;
+  text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  color: #663399;
+}
+
+/* Transparent container for buttons */
+.transparent-container {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons (bigger, bouncy) */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 15px 25px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
+
+/* Fun colorful buttons */
+.btn-blue { background-color: #3399ff; color: white; }
+.btn-red { background-color: #ff6666; color: white; }
+.btn-green { background-color: #66cc66; color: white; }
+.btn-yellow { background-color: #ffcc33; color: white; }
+
+.audio-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff7eb3, #ff758c);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.audio-toggle:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+}
+
+.audio-toggle:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 767px) {
+
+  .audio-toggle {
+    z-index: 100;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: medium;
+  }
+
+
+
+  .transparent-container {
+    display: flex;
+    margin: 0 0 10px;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    padding: 10px;
+    flex-direction: column;
+  }
+
+  .transparent-container h1 {
+   margin-top: 0;
+  }
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    flex-direction: column;
+  }
+
+  .button-container button {
+    height: auto;
+    font-size: small;
+  }
+}

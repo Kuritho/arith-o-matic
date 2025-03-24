@@ -1,0 +1,211 @@
+.containers {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #7ac48e;
+  }
+
+  .home-texts {
+    position: absolute;
+    top: 10px;
+    left: 14px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #e9dbdb;
+  }
+
+  .home-text-problems {
+    position: absolute;
+    top: 130px;
+    left: 152px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #010000;
+  }
+
+  .home-buttons {
+    position: absolute;
+    top: 80px;
+    left: 10px;
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .home-buttons:hover {
+    background-color: #0056b3;
+  }
+
+  .subtraction-box {
+    position: absolute;
+    top: 140px;
+    left: 150px;
+    font-size: 70px;
+    font-weight: bold;
+    background-color: #f8f9fa;
+    padding: 40px;
+    border-radius: 8px;
+    border: 2px solid #000;
+  }
+  
+  .big-boxes {
+    position: relative;
+    width: 40rem;
+    height: 23rem;
+    background-color: #c8d8f1;
+    color: rgb(0, 0, 0);
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    overflow: hidden;
+  }
+
+  .right-aligns {
+    justify-content: flex-end;
+    padding-right: 7rem;
+  }
+
+  .bordereds {
+    border: 3px solid #000000; 
+  }
+
+.small-box-containers {
+  position: absolute;
+  top: 2%;
+  right: 25%;
+  display: flex;
+  flex-direction: row; 
+  align-items: flex-end;
+}
+/* a. Add animations when dragging/dropping for smoother UI.
+b. Allow users to remove boxes after dropping. */
+
+.small-box-hundredsx {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px;
+}
+
+.small-box-tensx { 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px;
+
+  }
+
+  .small-box-onesx {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px;
+
+
+  }
+
+  .hammer-icons {
+    position: absolute;
+    top: 90px;
+    right: 120px;
+    font-size: 60px;
+  }
+
+  .animated-drop {
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  
+  .animated-drop:nth-child(n) {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .result-texts {
+    position: fixed;
+    bottom: 20px;
+    left: 65%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .success-texts {
+    font-size: 26px;
+    font-weight: bold;
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .check-button {
+    position: fixed;
+    bottom: 70px;
+    left: 300px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .check-button:hover {
+    background-color: #0056b3;
+  }
+
+  .success-texts {
+    position: fixed;
+    top: 20px;
+    left: 85%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: bold;
+    color: green;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .reward-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffcc00;
+    background-color: #333;
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: fadeInOut 10s ease-in-out;
+  }
+  
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    10%, 90% { opacity: 1; }
+  }
+  
