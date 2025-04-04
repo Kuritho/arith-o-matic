@@ -65,6 +65,10 @@ const Additionx = () => {
 
   useEffect(() => {
     if (showReward) {
+      // fetch("http://localhost:3001/dispense", { method: "POST" })
+      // .then(response => response.json())
+      // .then(data => console.log(data.message))
+      // .catch(error => console.error("Error dispensing:", error));
       const audio = new Audio("/congrats.mp3");
       audio.play().catch((error) => console.error("Audio playback failed:", error));
     }
