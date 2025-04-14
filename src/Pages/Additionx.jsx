@@ -397,7 +397,7 @@ const Additionx = () => {
 //------------------------------------------------------------------EPS START
 
 function sendCommand(command) {
-  fetch('http://192.168.110.185/'+command)
+  fetch('http://160.187.221.146/'+command)
       .then(response => response.text())
       .then(data => {
           console.log("Server says:", data);
