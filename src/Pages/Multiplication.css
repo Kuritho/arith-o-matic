@@ -86,6 +86,21 @@
   transition: background-color 0.3s, transform 0.2s;
 }
 
+.drop-zone {
+  width: 120px;
+  height: 120px;
+  background-color: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 10px;
+  font-size: 24px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
 .box:hover {
   background-color: #0056b3;
   transform: scale(1.08);
@@ -170,4 +185,46 @@
   .title {
       font-size: 24px;
   }
+}
+
+.congratulations-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  text-align: center;
+  max-width: 90%;
+}
+
+.reward-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.reward-button {
+  padding: 1rem;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.reward-button:hover {
+  transform: scale(1.05);
+  background-color: #45a049;
+}
+
+.reward-selected {
+  font-size: 2rem;
+  margin-top: 1rem;
 }

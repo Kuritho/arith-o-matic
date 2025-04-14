@@ -7,8 +7,8 @@ app.use(cors());
 app.use(express.json());
 
 const port = new SerialPort.SerialPort({
-  path: "COM3", 
-  baudRate: 9600,
+  path: "COM6", 
+  baudRate: 115200,
 });
 
 app.post("/dispense", (req, res) => {

@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useDrag, useDrop } from "react-dnd";
+import { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 import "./Division.css";
 
@@ -10,44 +9,29 @@ const correctsAudio = new Audio("/corrects.mp3");
 
 const ItemTypes = { STAR: "star" };
 
-const Star = ({ id, onRemove, emoticon }) => { 
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.STAR,
-    item: { id },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-
+const Star = ({ id, emoticon, onDragStart }) => {
   return (
     <span
-      ref={drag}
       className="star"
-      onClick={() => onRemove && onRemove(id)}
-      style={{ fontSize: "2rem", opacity: isDragging ? 0.5 : 1, cursor: "pointer" }}
+      data-id={id}
+      onTouchStart={(e) => onDragStart(e, id)}
+      onMouseDown={(e) => onDragStart(e, id)}
+      style={{ fontSize: "2rem", cursor: "grab", touchAction: "none" }}
     >
       {emoticon}
     </span>
   );
 };
 
-const Box = ({ stars, onDrop, onRemove, boxIndex, selectedEmoticon }) => { 
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: ItemTypes.STAR,
-    drop: (item) => onDrop(item.id, boxIndex),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }));
-
+const Box = ({ stars, boxIndex, boxRef }) => {
   return (
     <div
-      ref={drop}
+      ref={boxRef}
       className="drop-box"
       style={{
         width: "150px",
         height: "150px",
-        backgroundColor: isOver ? "lightblue" : "#eee",
+        backgroundColor: "#eee",
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "center",
@@ -56,10 +40,15 @@ const Box = ({ stars, onDrop, onRemove, boxIndex, selectedEmoticon }) => {
         margin: "10px",
       }}
     >
-{stars.map((id) => (
-  <Star key={id} id={id} onRemove={() => onRemove(id, boxIndex)} emoticon={selectedEmoticon} />
-))}
-
+      {stars.map((star, index) => (
+        <span
+          key={index}
+          className="star"
+          style={{ fontSize: "2rem", cursor: "pointer" }}
+        >
+          {star.emoticon}
+        </span>
+      ))}
     </div>
   );
 };
@@ -76,6 +65,17 @@ export const Division = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCongrats, setShowCongrats] = useState(false);
   const [selectedEmoticon, setSelectedEmoticon] = useState(".");
+  const [selectedReward, setSelectedReward] = useState(null);
+
+  const boxRefs = useRef([]);
+  const dragData = useRef({ id: null });
+  const initialCount = useRef(0);
+
+  const rewards = [
+    { emoji: 1, name: "🍫", name: "Reward 1" },
+    { emoji: 2, name:"🍬", name: "Reward 2" },
+    { emoji: 3, name: "🎖️", name: "Reward 3" }
+  ];
 
   const playAudio = () => {
     const audio = new Audio("/congrats.mp3");
@@ -83,7 +83,6 @@ export const Division = () => {
       audio.play();
     }, { once: true }); // Ensures it only plays once per click
   };
-
 
   useEffect(() => {
     generateProblem();
@@ -109,13 +108,24 @@ export const Division = () => {
       setQuotient(newQuotient);
     } while (newDividend % newDivisor !== 0);
 
+    const newStars = Array.from({ length: newDividend }, (_, i) => ({ id: i, emoticon: selectedEmoticon }));
+
     setDividend(newDividend);
     setDivisor(newDivisor);
-    setStars(Array.from({ length: newDividend }, (_, i) => i));
+    setStars(newStars);
     setBoxes(Array.from({ length: newDivisor }, () => []));
     setUserQuotient("?");
     setIsCorrect(null);
+    dragData.current = { id: null };
+    initialCount.current = newDividend;
+    setSelectedReward(null);
   };
+
+  useEffect(() => {
+    if (stars.length === initialCount.current && boxes.every(b => b.length === 0)) {
+      setStars((prev) => prev.map((s) => ({ ...s, emoticon: selectedEmoticon })));
+    }
+  }, [selectedEmoticon]);
 
   const updateUserQuotient = () => {
     const starsInBoxes = boxes.reduce((total, box) => total + box.length, 0);
@@ -142,23 +152,57 @@ export const Division = () => {
     setStars((prevStars) => [...prevStars, starId]);
   };
 
+  const selectReward = (reward) => {
+    setSelectedReward(reward);
+    if(reward.emoji === 1) { 
+      sendCommand("open1");
+       
+    }
+    else if(reward.emoji === 2) { 
+        
+      sendCommand("open2");
+    }
+    else if(reward.emoji === 3) { 
+      sendCommand("open3"); 
+      
+    }
+    // Hide the congratulations after reward is selected
+    setTimeout(() => {
+      setShowConfetti(false);
+      setShowCongrats(false);
+      setCorrectStreak(0);
+      generateProblem();
+    }, 2000);
+  };
+
+  function sendCommand(command) {
+    fetch('http://192.168.110.185/'+command)
+        .then(response => response.text())
+        .then(data => {
+            console.log("Server says:", data);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+  }
+
   const checkAnswer = () => {
     if (parseFloat(userQuotient) === quotient) {
       setIsCorrect(true);
       correctsAudio.play();
-      setCorrectStreak((prevStreak) => prevStreak + 1);
-      if (correctStreak + 1 >= 3) {
-        setShowConfetti(true);
-        setShowCongrats(true);
-        setTimeout(() => {
-          setShowConfetti(false);
-          setShowCongrats(false);
-          setCorrectStreak(0);
+      setCorrectStreak((prevStreak) => {
+        const newStreak = prevStreak + 1;
+        if (newStreak >= 3) {
+          setShowConfetti(true);
+          setShowCongrats(true);
+        }
+        return newStreak;
+      });
+      setTimeout(() => {
+        if (correctStreak + 1 < 3) { // Only reset if not reaching 3 correct answers
           generateProblem();
-        }, 10000);
-      } else {
-        setTimeout(generateProblem, 4000);
-      }
+        }
+      }, 4000);
     } else {
       setIsCorrect(false);
       failsAudio.play();
@@ -167,10 +211,59 @@ export const Division = () => {
     }
   };
 
+  const handleDragStart = (e, id) => {
+    dragData.current = { id };
+    const moveHandler = (eMove) => eMove.preventDefault();
+    document.addEventListener("touchmove", moveHandler, { passive: false });
+
+    const endHandler = (ev) => {
+      const touch = ev.changedTouches?.[0] || ev;
+      const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+      const dropIndex = boxRefs.current.findIndex((ref) => ref?.contains(dropTarget));
+      const draggedStarIndex = stars.findIndex((s) => s.id === dragData.current.id);
+      if (dropIndex !== -1 && draggedStarIndex !== -1) {
+        const draggedStar = stars[draggedStarIndex];
+        setBoxes((prev) =>
+          prev.map((box, i) => (i === dropIndex ? [...box, draggedStar] : box))
+        );
+        setStars((prev) => prev.filter((_, i) => i !== draggedStarIndex));
+      }
+      dragData.current = { id: null };
+      document.removeEventListener("touchmove", moveHandler);
+      document.removeEventListener("mouseup", endHandler);
+      document.removeEventListener("touchend", endHandler);
+      updateUserQuotient();
+    };
+
+    document.addEventListener("mouseup", endHandler);
+    document.addEventListener("touchend", endHandler);
+  };
+
   return (
     <div className="containerz">
       {showConfetti && <Confetti />}
-      {showCongrats && <h1 className="congrats-message">CONGRATULATIONS! YOU WON A REWARDS! 🎉</h1>}
+      {showCongrats && (
+        <div className="congratulations-container">
+          <h1 className="congrats-message"> - 🎉CONGRATULATIONS! YOU WON A REWARD! 🎉 -  Please Choose Your Reward! </h1>
+          {!selectedReward ? (
+            <div className="reward-buttons">
+              {rewards.map((reward, index) => (
+                <button
+                  key={index}
+                  className="reward-button"
+                  onClick={() => selectReward(reward)}
+                >
+                  {reward.emoji} {reward.name}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="reward-selected">
+              <h3>You selected: {selectedReward.emoji} {selectedReward.name}</h3>
+            </div>
+          )}
+        </div>
+      )}
       <Link to="/">
         <button className="home-button" style={{ position: "absolute", top: "10px", left: "10px" }}>Back to Home Page</button>
       </Link>
@@ -181,7 +274,6 @@ export const Division = () => {
           <p className="correct-answer" style={{ color: isCorrect ? "green" : "red" }}>
             {isCorrect ? "Correct Answer!" : "Incorrect Answer!"}
           </p>
-        
         )} 
         
         <button onClick={checkAnswer} className="check-answer-button">Check Answer</button>
@@ -195,13 +287,18 @@ export const Division = () => {
         <option value="🌟">🌟</option>
       </select>
       <div className="stars-container">
-        {stars.map((id) => (
-          <Star key={id} id={id} emoticon={selectedEmoticon} />
+        {stars.map((star) => (
+          <Star key={star.id} id={star.id} emoticon={star.emoticon} onDragStart={handleDragStart} />
         ))}
       </div>
       <div className="bottom-box-container">
         {boxes.map((boxStars, index) => (
-          <Box key={index} boxIndex={index} stars={boxStars} onDrop={handleDrop} onRemove={handleRemoveStar} selectedEmoticon={selectedEmoticon} />
+          <Box
+            key={index}
+            boxIndex={index}
+            stars={boxStars}
+            boxRef={(el) => (boxRefs.current[index] = el)}
+          />
         ))}
       </div>
     </div>

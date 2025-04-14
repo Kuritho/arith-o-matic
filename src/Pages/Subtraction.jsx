@@ -1,248 +1,364 @@
-import { useState, useEffect } from "react"; 
 import { Link } from "react-router-dom";
-import { useDrag, useDrop } from "react-dnd";
+import { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 import "./Subtraction.css";
+import HundredImage from "./assets/hundred_enhanced-removebg-preview.png";
+import TenImage from "./assets/ten_enhanced-removebg-preview.png";
+import OneImage from "./assets/Screenshot_2025-03-22_195903_enhanced-removebg-preview.png";
 
 const congratsAudio = new Audio("/congrats.mp3");
 const failsAudio = new Audio("/fails.mp3");
 const correctsAudio = new Audio("/corrects.mp3");
 
-const ItemTypes = {
-  GRID: "grid",
-};
+const Subtraction = () => {
+  const [minuend, setMinuend] = useState(0);
+  const [subtrahend, setSubtrahend] = useState(0);
+  const [difference, setDifference] = useState(0);
+  const [droppedItems, setDroppedItems] = useState([]);
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [correctStreak, setCorrectStreak] = useState(parseInt(localStorage.getItem("correctStreak")) || 0);
+  const [showReward, setShowReward] = useState(false);
+  const touchItemRef = useRef(null);
+  const boxRef = useRef(null);
+  const [userAnswer, setUserAnswer] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
 
-const DraggableGrid = ({ type, className, index, boxIndex, onRemove }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.GRID,
-    item: { type, index, boxIndex },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
+  const generateNumbers = () => {
+    let min, max;
+    if (questionIndex === 0) {
+      min = 1;
+      max = 9;
+    } else if (questionIndex === 1) {
+      min = 10;
+      max = 99;
+    } else if (questionIndex === 2) {
+      min = 100;
+      max = 999;
+    } else return;
+    
+    const newSubtrahend = Math.floor(Math.random() * (max - min + 1)) + min;
+    const newMinuend = Math.floor(Math.random() * (max - min + 1)) + newSubtrahend;
+    
+    setMinuend(newMinuend);
+    setSubtrahend(newSubtrahend);
+    setDifference(newMinuend - newSubtrahend);
+  };
 
-  return (
-    <div
-      ref={drag}
-      className={className}
-      style={{ opacity: isDragging ? 0.5 : 1, cursor: "pointer" }}
-      onClick={() => onRemove && onRemove(boxIndex, index)}
-    />
-  );
-};
+  useEffect(() => {
+    if (questionIndex <= 2) {
+      generateNumbers();
+    }
+  }, [questionIndex]);
 
-const DroppableBox = ({ acceptTypes, className, onDrop, children, boxIndex }) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: ItemTypes.GRID,
-    drop: (item) => onDrop(boxIndex, item.type),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }));
+  useEffect(() => {
+    if (showReward) {
+      const audio = new Audio("/congrats.mp3");
+      audio.play().catch((error) => console.error("Audio playback failed:", error));
+    }
+  }, [showReward]);
 
-  return (
-    <div ref={drop} className={className} style={{ backgroundColor: isOver ? "lightgreen" : "lightgray" }}>
-      {children}
-    </div>
-  );
-};
-
-const DeleteBox = ({ onRemove }) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: ItemTypes.GRID,
-    drop: (item) => onRemove(item.boxIndex, item.index),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }));
-
-  return (
-    <div ref={drop} className="delete-box" style={{ backgroundColor: isOver ? "red" : "gray" }}>
-      Delete
-    </div>
-  );
-};
-
-export const Subtraction = () => {
-  const [num1, setNum1] = useState(0);
-  const [num2, setNum2] = useState(0);
-  const [droppedItems, setDroppedItems] = useState({ 1: [], 2: [], 3: []}); //, 4: [], 5: [], 6: [] 
-  const [userTotal, setUserTotal] = useState(0);
-  const [message, setMessage] = useState("");
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [correctStreak, setCorrectStreak] = useState(0);
-  const [showReloadButton, setShowReloadButton] = useState(false);
-  const [questionNumber, setQuestionNumber] = useState(1);
-
-  const generateNewQuestion = () => {
-    let firstNum, secondNum;
-
-    if (questionNumber === 1) {
-      // Easy: 1-digit numbers
-      firstNum = Math.floor(1 + Math.random() * 9);
-      secondNum = Math.floor(1 + Math.random() * 9);
-    } else if (questionNumber === 2) {
-      // Hard: 2-digit numbers
-      firstNum = Math.floor(10 + Math.random() * 90);
-      secondNum = Math.floor(10 + Math.random() * 90);
+  const handleTouchStart = (e, type) => {
+    const touch = e.touches[0];
+    const clone = document.createElement("div");
+    clone.style.position = "absolute";
+    clone.style.zIndex = 1000;
+    clone.style.left = `${touch.clientX}px`;
+    clone.style.top = `${touch.clientY}px`;
+    
+    if (type === "hammer") {
+      clone.innerHTML = '<span style="font-size: 48px">🔨</span>';
     } else {
-      // Extremely Hard: 3-digit numbers
-      firstNum = Math.floor(100 + Math.random() * 900);
-      secondNum = Math.floor(100 + Math.random() * 900);
+      const img = document.createElement("img");
+      img.src = type === "hundreds" ? HundredImage : type === "tens" ? TenImage : OneImage;
+      img.style.width = type === "hundreds" ? "100px" : type === "tens" ? "50px" : "40px";
+      img.style.height = type === "ones" ? "70px" : "150px";
+      clone.appendChild(img);
     }
-
-    // Ensure the first number is greater than or equal to the second number for non-negative result
-    if (firstNum < secondNum) {
-      [firstNum, secondNum] = [secondNum, firstNum]; // Swap to avoid negative answers
-    }
-
-    setNum1(firstNum);
-    setNum2(secondNum);
-    setDroppedItems({ 1: [], 2: [], 3: [] }); //, 4: [], 5: [], 6: []
-    setUserTotal(0);
-    setMessage("");
-    setQuestionNumber((prev) => (prev < 3 ? prev + 1 : 1));
+    
+    document.body.appendChild(clone);
+    touchItemRef.current = { type, clone, startX: touch.clientX, startY: touch.clientY };
   };
 
-  useEffect(() => {
-    generateNewQuestion();
-  }, []);
+  const handleTouchMove = (e) => {
+    if (!touchItemRef.current) return;
+    const touch = e.touches[0];
+    const { clone } = touchItemRef.current;
+    clone.style.left = `${touch.clientX}px`;
+    clone.style.top = `${touch.clientY}px`;
+  };
 
-  useEffect(() => {
-    const sum = Object.values(droppedItems).flat().reduce((acc, type) => {
-      return acc + (type === "hundreds" ? 100 : type === "tens" ? 10 : 1);
-    }, 0);
-    setUserTotal(sum);
-  }, [droppedItems]);
-
-  const handleDrop = (boxIndex, type) => {
-    setDroppedItems((prev) => {
-      if (prev[boxIndex].length < 9) {
-        return { ...prev, [boxIndex]: [...prev[boxIndex], type] };
+  const handleTouchEnd = (e) => {
+    if (!touchItemRef.current || !boxRef.current) {
+      if (touchItemRef.current?.clone) {
+        document.body.removeChild(touchItemRef.current.clone);
       }
-      return prev;
+      touchItemRef.current = null;
+      return;
+    }
+
+    const { type, clone, startX, startY } = touchItemRef.current;
+    const box = boxRef.current;
+    const rect = box.getBoundingClientRect();
+    const endX = parseInt(clone.style.left);
+    const endY = parseInt(clone.style.top);
+
+    // Check if dropped inside the box
+    if (endX > rect.left && endX < rect.right && endY > rect.top && endY < rect.bottom) {
+      const x = endX - rect.left;
+      const y = endY - rect.top;
+      
+      if (type === "hammer") {
+        // Find the item closest to the drop position
+        let closestItem = null;
+        let minDistance = Infinity;
+        
+        droppedItems.forEach((item, index) => {
+          const distance = Math.sqrt(Math.pow(item.x - x, 2) + Math.pow(item.y - y, 2));
+          if (distance < minDistance && distance < 100) { // 100px threshold
+            minDistance = distance;
+            closestItem = { ...item, index };
+          }
+        });
+
+        if (closestItem) {
+          // Break down the item
+          setDroppedItems(prevItems => {
+            const newItems = [...prevItems];
+            newItems.splice(closestItem.index, 1);
+            
+            if (closestItem.type === "hundreds") {
+              for (let i = 0; i < 10; i++) {
+                newItems.push({ 
+                  type: "tens", 
+                  x: closestItem.x + (i % 5) * 30, 
+                  y: closestItem.y + Math.floor(i / 5) * 30 
+                });
+              }
+            } else if (closestItem.type === "tens") {
+              for (let i = 0; i < 10; i++) {
+                newItems.push({ 
+                  type: "ones", 
+                  x: closestItem.x + (i % 5) * 20, 
+                  y: closestItem.y + Math.floor(i / 5) * 20 
+                });
+              }
+            }
+            return newItems;
+          });
+        }
+      } else {
+        // Regular item drop
+        setDroppedItems(prev => [...prev, { type, x, y }]);
+      }
+    }
+
+    document.body.removeChild(clone);
+    touchItemRef.current = null;
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const type = event.dataTransfer.getData("type");
+    const index = event.dataTransfer.getData("index");
+  
+    if (type === "hammer") return;
+  
+    const bigBox = event.currentTarget;
+    const rect = bigBox.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+  
+    let newItems = [...droppedItems];
+  
+    if (index !== "null") {
+      newItems = newItems.map((item, i) => 
+        i === parseInt(index) ? { ...item, x, y } : item
+      );
+    } else {
+      newItems.push({ type, x, y });
+    }
+  
+    // Convert sets of 10
+    const onesCount = newItems.filter(item => item.type === "ones").length;
+    if (onesCount >= 10) {
+      newItems = newItems.filter(item => item.type !== "ones");
+      const remainingOnes = onesCount % 10;
+      for (let i = 0; i < remainingOnes; i++) {
+        newItems.push({ type: "ones", x, y });
+      }
+      newItems.push({ type: "tens", x, y });
+    }
+  
+    const tensCount = newItems.filter(item => item.type === "tens").length;
+    if (tensCount >= 10) {
+      newItems = newItems.filter(item => item.type !== "tens");
+      const remainingTens = tensCount % 10;
+      for (let i = 0; i < remainingTens; i++) {
+        newItems.push({ type: "tens", x, y });
+      }
+      newItems.push({ type: "hundreds", x, y });
+    }
+  
+    setDroppedItems(newItems);
+  };
+  
+  const handleHammerDrop = (event, index) => {
+    event.preventDefault();
+    const type = event.dataTransfer.getData("type");
+    if (type !== "hammer") return;
+    
+    setDroppedItems(prevItems => {
+      const newItems = [...prevItems];
+      const { type: itemType, x, y } = newItems[index];
+      newItems.splice(index, 1);
+      
+      if (itemType === "hundreds") {
+        for (let i = 0; i < 10; i++) {
+          newItems.push({ type: "tens", x: x + (i % 5) * 30, y: y + Math.floor(i / 5) * 30 });
+        }
+      } else if (itemType === "tens") {
+        for (let i = 0; i < 10; i++) {
+          newItems.push({ type: "ones", x: x + (i % 5) * 20, y: y + Math.floor(i / 5) * 20 });
+        }
+      }
+      return newItems;
     });
   };
 
-  const handleRemove = (boxIndex, index) => {
-    setDroppedItems((prev) => {
-      const newItems = [...prev[boxIndex]];
-      newItems.splice(index, 1);
-      return { ...prev, [boxIndex]: newItems };
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const calculateAnswer = () => {
+    let sum = 0;
+    droppedItems.forEach(item => {
+      if (item.type === "hundreds") sum += 100;
+      if (item.type === "tens") sum += 10;
+      if (item.type === "ones") sum += 1;
     });
+    setUserAnswer(sum);
+    return sum;
   };
 
   const checkAnswer = () => {
-    if (userTotal === num1 - num2) {
-      setMessage("✅ Correct! Next Question");
-
+    const isAnswerCorrect = calculateAnswer() === (minuend - subtrahend);
+    setIsCorrect(isAnswerCorrect);
+  
+    if (isAnswerCorrect) {
+      const newStreak = correctStreak + 1;
+      localStorage.setItem("correctStreak", newStreak);
+      setCorrectStreak(newStreak);
       correctsAudio.play();
-
-      setCorrectStreak((prev) => prev + 1);
-
-      if (correctStreak + 1 === 3) {
-        setShowConfetti(true);
-        setMessage("🎉 CONGRATULATIONS! YOU GOT THE REWARDS! 🎊");
-        setShowReloadButton(true);
-
-        congratsAudio.play();
-
-        setTimeout(() => {
-          setMessage("");
-        }, 10000);
-
-        setTimeout(() => setShowConfetti(false), 10000);
-        setCorrectStreak(0);
-      } else {
-        setTimeout(() => {
-          generateNewQuestion();
-          setMessage("");
-        }, 4000);
-      }
-    } else {
-      setMessage("❌ Sorry, wrong answer. Try again!");
-
-      failsAudio.play();
-
+  
       setTimeout(() => {
-        setMessage("");
-      }, 6000);
+        setIsCorrect(null);
+        setDroppedItems([]);
+  
+        if (newStreak >= 3) {
+          setShowReward(true);
+          
+          setTimeout(() => {
+            setShowReward(false);
+            localStorage.setItem("correctStreak", 0);
+            setCorrectStreak(0);
+            setQuestionIndex(0);
+            setDroppedItems([]);
+          }, 10000);
+        } else {
+          setQuestionIndex(prevIndex => prevIndex + 1);
+        }
+      }, 4000);
+    } else {
+      localStorage.setItem("correctStreak", 0);
+      failsAudio.play();
       setCorrectStreak(0);
+      setQuestionIndex(0);
+      setDroppedItems([]);
     }
   };
 
+  const handleDragStart = (event, type, index = null) => {
+    event.dataTransfer.setData("type", type);
+    event.dataTransfer.setData("index", index);
+  };
+
+  const handleRemoveItem = (index) => {
+    setDroppedItems(prevItems => prevItems.filter((_, i) => i !== index));
+  };
+
   return (
-    <div>
-      {showConfetti && <Confetti />}
-      <h1>{message}</h1>
-      <div className="addition-container">
-        <div className="top-left">
-          <h1 className="addition-title">Subtraction</h1>
-          <Link to="/">
-            <button className="btn btn-home">Back to Home Page</button>
-          </Link>
-        </div>
+    <div 
+      className="container right-align" 
+      onTouchMove={handleTouchMove} 
+      onTouchEnd={handleTouchEnd}
+    >
+      <p className="home-text">Subtraction</p>
+      <p className="home-text-problem">Given Problem</p>
+      <button className="home-button" onClick={() => window.location.href = '/'}>Back to Homepage</button>
+      
+      <div 
+        className="hammer-icon" 
+        draggable
+        onDragStart={(e) => handleDragStart(e, "hammer")}
+        onTouchStart={(e) => handleTouchStart(e, "hammer")}
+      >
+        <span style={{ fontSize: '48px' }}>🔨</span>
+      </div>
+      
+      <p className="subtraction-box">
+        <h1 className="minus">-</h1>
+        {minuend} <br/>{subtrahend} <br/>=<br/> 
+      </p>
 
-        <div className="top-center-hundreds">
-          <DraggableGrid type="hundreds" className="ten-by-ten-grid" />
-          <h1 className="hundred-label">Hundreds</h1>
-        </div>
-        <div className="top-center-tens">
-          <DraggableGrid type="tens" className="one-by-ten-grid" />
-          <h1 className="tens-label">Tens</h1>
-        </div>
-        <div className="top-center-ones">
-          <DraggableGrid type="ones" className="one-by-one-grid" />
-          <h1 className="ones-label">Ones</h1>
-        </div>
-
-        <div className="left-center">
-          <div className="problem-text">
-            <p>{num1}</p>
-            <p>- {num2}</p>
-            <p className="underline"> = </p>
-            <p className="answer">{userTotal}</p>
+      <div
+        ref={boxRef}
+        className="big-box bordered"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
+        {droppedItems.map((item, index) => (
+          <div 
+            key={index} 
+            className="dropped-item"
+            draggable
+            onDragStart={(e) => handleDragStart(e, item.type, index)}
+            onDrop={(e) => handleHammerDrop(e, index)}
+            onClick={() => handleRemoveItem(index)}
+            style={{
+              position: "absolute",
+              left: `${item.x}px`,
+              top: `${item.y}px`,
+              cursor: "grab"
+            }}
+          >
+            {item.type === "hundreds" ? (
+              <img src={HundredImage} alt="100" style={{ width: "110px", height: "110px" }} />
+            ) : item.type === "tens" ? (
+              <img src={TenImage} alt="10" style={{ width: "40px", height: "110px" }} />
+            ) : (
+              <img src={OneImage} alt="1" style={{ width: "40px", height: "60px" }} />
+            )}
           </div>
-          <button className="btn-btn-check" onClick={checkAnswer}>Check Answer</button>
-        </div>
+        ))}
+      </div>
 
-        <div className="right-center">
-          <div className="grid-container">
-            {[1, 2, 3].map((boxIndex) => ( //, 4, 5, 6
-              <DroppableBox
-                key={boxIndex}
-                acceptTypes={["hundreds", "tens", "ones"]}
-                className="grid-box"
-                onDrop={handleDrop}
-                boxIndex={boxIndex}
-              >
-                {droppedItems[boxIndex].map((type, index) => (
-                  <DraggableGrid
-                    key={index}
-                    type={type}
-                    className={type === "hundreds" ? "ten-by-ten-grid" : type === "tens" ? "one-by-ten-grid" : "one-by-one-grid"}
-                    index={index}
-                    boxIndex={boxIndex}
-                    onRemove={handleRemove}
-                  />
-                ))}
-              </DroppableBox>
-            ))}
-          </div>
+      <p className="result-text">Your Answer: {userAnswer}</p>
+      <button className="check-button" onClick={checkAnswer}>Check Answer</button>
+      {isCorrect !== null && (
+        <p className="success-text">{isCorrect ? "🎉 Correct Answer! 🎉" : "❌ Incorrect Answer. Try Again!"}</p>
+      )}
+      {showReward && <Confetti />} 
+      {showReward && <p className="reward-text">🎁 Congratulations! You won a reward! 🎁</p>}
+
+      <div className="small-box-container">
+        <div className="small-box-hundreds" onTouchStart={(e) => handleTouchStart(e, "hundreds", null)}>
+          <img src={HundredImage} alt="100" style={{ width: "150px", height: "150px" }} />
         </div>
-        <div className="delete-box-container">
-          <DeleteBox onRemove={handleRemove} />
+        <div className="small-box-tens" onTouchStart={(e) => handleTouchStart(e, "tens", null)}>
+          <img src={TenImage} alt="100" style={{ width: "50px", height: "150px" }} />
         </div>
-        <div>
-          <p>{message}</p>
-          {showReloadButton && (
-            <button 
-              onClick={() => window.location.reload()} 
-              className="restart-button"
-            >
-              🔄 Play Again
-            </button>
-          )}
+        <div className="small-box-ones" onTouchStart={(e) => handleTouchStart(e, "ones", null)}>
+          <img src={OneImage} alt="100" style={{ width: "50px", height: "70px" }} />
         </div>
       </div>
     </div>
